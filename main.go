@@ -2,9 +2,11 @@ package main
 
 import (
 	"context"
+	"errors"
 	"flag"
 	"fmt"
 	"os"
+	"os/signal"
 
 	"github.com/phhphc/response-meter/collector"
 	"github.com/phhphc/response-meter/meter"
@@ -21,13 +23,14 @@ func main() {
 		os.Exit(1)
 	}
 
-	ctx := context.TODO()
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
+	defer stop()
 
 	f := collector.NewHTTPStatusCollectorFactory(*target)
 	m := meter.New(f)
 
-	if err := m.Measure(ctx, *concurrency); err != nil {
+	err := m.Measure(ctx, *concurrency)
+	if err != nil && !errors.Is(err, context.Canceled) {
 		fmt.Fprintf(os.Stderr, "error: %v\n", err)
-		os.Exit(1)
 	}
 }
