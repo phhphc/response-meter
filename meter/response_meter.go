@@ -57,21 +57,25 @@ func (m Meter) Measure(ctx context.Context, concurrency int) error {
 	g.Go(func() error {
 		start := time.Now()
 		t := time.NewTicker(2 * time.Second)
-		m := make(map[string]int)
+		counts := make(map[string]int)
 		for {
 			select {
 			case <-ctx.Done():
 				return nil
 			case res := <-ch:
-				m[res]++
+				counts[res]++
 			case <-t.C:
 				dur := time.Since(start).Seconds()
 				total := 0
-				for _, c := range m {
+				for _, c := range counts {
 					total += c
 				}
 				avg := float64(total) / dur
-				fmt.Printf("%0.3f resq/s, %v\n", avg, m)
+				parcentages := make(map[string]float64)
+				for res, c := range counts {
+					parcentages[res] = (float64(c) / float64(total)) * 100
+				}
+				fmt.Printf("%0.3f resq/s | %v | %v\n", avg, parcentages, counts)
 			}
 		}
 	})
