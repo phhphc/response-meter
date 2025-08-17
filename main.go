@@ -15,7 +15,7 @@ import (
 
 func main() {
 	target := flag.String("t", "", "target url")
-	concurrency := flag.Int("c", 10, "number of concurrent requests")
+	concurrency := flag.Int("c", 1, "number of concurrent requests")
 	flag.Parse()
 
 	if *target == "" {
