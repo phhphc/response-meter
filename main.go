@@ -10,6 +10,7 @@ import (
 
 	"github.com/phhphc/response-meter/collector"
 	"github.com/phhphc/response-meter/meter"
+	"github.com/phhphc/response-meter/reporter"
 )
 
 func main() {
@@ -27,7 +28,8 @@ func main() {
 	defer stop()
 
 	f := collector.NewHTTPStatusCollectorFactory(*target)
-	m := meter.New(f)
+	r := reporter.NewTUIReporter()
+	m := meter.New(f, r)
 
 	err := m.Measure(ctx, *concurrency)
 	if err != nil && !errors.Is(err, context.Canceled) {

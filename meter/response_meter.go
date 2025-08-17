@@ -10,6 +10,7 @@ import (
 
 type Meter struct {
 	CollectorFactory CollectorFactory
+	Reporter         Reporter
 }
 
 type CollectorFactory interface {
@@ -20,9 +21,21 @@ type Collector interface {
 	Collect(ctx context.Context) (string, error)
 }
 
-func New(f CollectorFactory) *Meter {
+type Reporter interface {
+	Update(s Stats) error
+}
+
+type Stats struct {
+	TotalCounts        map[string]int
+	TotalDuration      time.Duration
+	LastPeriodCounts   map[string]int
+	LastPeriodDuration time.Duration
+}
+
+func New(f CollectorFactory, r Reporter) *Meter {
 	return &Meter{
 		CollectorFactory: f,
+		Reporter:         r,
 	}
 }
 
@@ -55,27 +68,38 @@ func (m Meter) Measure(ctx context.Context, concurrency int) error {
 	}
 
 	g.Go(func() error {
-		start := time.Now()
 		t := time.NewTicker(2 * time.Second)
-		counts := make(map[string]int)
+		defer t.Stop()
+
+		s := Stats{
+			TotalCounts:        make(map[string]int),
+			TotalDuration:      0 * time.Second,
+			LastPeriodCounts:   make(map[string]int),
+			LastPeriodDuration: 0 * time.Second,
+		}
+		start := time.Now()
+		periodStart := start
+
 		for {
 			select {
 			case <-ctx.Done():
 				return nil
 			case res := <-ch:
-				counts[res]++
+				s.LastPeriodCounts[res]++
 			case <-t.C:
-				dur := time.Since(start).Seconds()
-				total := 0
-				for _, c := range counts {
-					total += c
+				now := time.Now()
+				s.TotalDuration = now.Sub(start)
+				s.LastPeriodDuration = now.Sub(periodStart)
+				periodStart = now
+				for k, v := range s.LastPeriodCounts {
+					s.TotalCounts[k] += v
 				}
-				avg := float64(total) / dur
-				parcentages := make(map[string]float64)
-				for res, c := range counts {
-					parcentages[res] = (float64(c) / float64(total)) * 100
+				if err := m.Reporter.Update(s); err != nil {
+					return fmt.Errorf("failed to update report: %w", err)
 				}
-				fmt.Printf("%0.3f resq/s | %v | %v\n", avg, parcentages, counts)
+				for k := range s.LastPeriodCounts {
+					s.LastPeriodCounts[k] = 0
+				}
 			}
 		}
 	})
