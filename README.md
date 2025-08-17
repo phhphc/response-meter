@@ -9,6 +9,7 @@ A lightweight tool to continuously hit a target server, collect responses, and c
 - 🎯 **HTTP Status Code Tracking**: Monitor and visualize HTTP status code distribution
 - ⚡ **High Performance**: Built with Go for efficient concurrent request handling
 - 🔧 **Extensible Architecture**: Designed to support various collectors and reporters in the future
+- 📦 **Zero Dependencies**: Built using only Go's standard library - no external dependencies required
 
 ## Installation
 

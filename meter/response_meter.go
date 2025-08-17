@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"golang.org/x/sync/errgroup"
+	"github.com/phhphc/response-meter/pkg/errgroup"
 )
 
 type Meter struct {
