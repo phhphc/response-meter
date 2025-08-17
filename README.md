@@ -76,13 +76,12 @@ The project follows a modular design with three main components:
 
 ```
 response-meter/
-├── main.go                   # CLI entry point
-├── meter/                    # Core measurement logic
-│   └── response_meter.go
-├── collector/                # Data collection implementations
-│   └── http_status_collector.go
-└── reporter/                 # Output formatting
-    └── tui_reporter.go
+├── main.go                              # CLI entry point
+├── internal/                            # Internal packages
+│   ├── meter/                           # Core measurement logic
+│   ├── collector/                       # Data collection implementations
+│   └── reporter/                        # Output formatting
+└── pkg/                                 # Reusable packages
 ```
 
 ## Future Roadmap

@@ -5,7 +5,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/phhphc/response-meter/meter"
+	"github.com/phhphc/response-meter/internal/meter"
 )
 
 type TUIReporter struct{}

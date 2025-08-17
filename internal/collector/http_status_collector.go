@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/phhphc/response-meter/meter"
+	"github.com/phhphc/response-meter/internal/meter"
 )
 
 type HTTPStatusCollectorFactory struct {
