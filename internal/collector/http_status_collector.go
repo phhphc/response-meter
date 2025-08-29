@@ -11,7 +11,6 @@ import (
 
 type HTTPStatusCollectorFactory struct {
 	target            string
-	DisableKeepAlives bool
 }
 
 func NewHTTPStatusCollectorFactory(target string) meter.CollectorFactory {
