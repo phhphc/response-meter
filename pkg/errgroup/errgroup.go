@@ -1,38 +1,44 @@
 package errgroup
 
 import (
+	"context"
 	"sync"
 )
 
-// Group is a collection of goroutines working on subtasks that are part of
-// the same overall task.
-type Group struct {
-	wg sync.WaitGroup
-
-	errOnce sync.Once
-	err     error
+func WithContext(ctx context.Context) (*Group, context.Context) {
+	ctx, cancel := context.WithCancel(ctx)
+	return &Group{cancel: cancel}, ctx
 }
 
-// Go calls the given function in a new goroutine.
-// The first call to return a non-nil error cancels the group; its error will be
-// returned by Wait.
+// Group is a collection of goroutines working on subtasks of the same overall task.
+// A Group must not be copied after first use (because it contains sync types).
+type Group struct {
+	wg      sync.WaitGroup
+	errOnce sync.Once
+	err     error
+	cancel  context.CancelFunc
+}
+
+// Go starts f in a new goroutine. On the first non-nil error, the group's context is canceled.
 func (g *Group) Go(f func() error) {
-	g.wg.Add(1)
-
-	go func() {
-		defer g.wg.Done()
-
+	g.wg.Go(func() {
 		if err := f(); err != nil {
 			g.errOnce.Do(func() {
 				g.err = err
+				if g.cancel != nil {
+					g.cancel()
+				}
 			})
 		}
-	}()
+	})
 }
 
-// Wait blocks until all function calls from the Go method have returned, then
-// returns the first non-nil error (if any) from them.
+// Wait blocks for all goroutines and returns the first error, if any.
+// It also cancels the context to release resources.
 func (g *Group) Wait() error {
 	g.wg.Wait()
+	if g.cancel != nil {
+		g.cancel()
+	}
 	return g.err
 }
