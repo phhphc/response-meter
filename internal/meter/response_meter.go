@@ -40,7 +40,7 @@ func New(f CollectorFactory, r Reporter) *Meter {
 }
 
 func (m Meter) Measure(ctx context.Context, concurrency int) error {
-	g := errgroup.Group{}
+	g, ctx := errgroup.WithContext(ctx)
 
 	ch := make(chan string, 1000*concurrency)
 	defer close(ch)
@@ -63,7 +63,6 @@ func (m Meter) Measure(ctx context.Context, concurrency int) error {
 					ch <- res
 				}
 			}
-
 		})
 	}
 
