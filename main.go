@@ -16,6 +16,7 @@ import (
 func main() {
 	target := flag.String("t", "", "target url")
 	concurrency := flag.Int("c", 1, "number of concurrent requests")
+	timeout := flag.Duration("d", 0, "timeout duration (default: 0 - no timeout)")
 	flag.Parse()
 
 	if *target == "" {
@@ -27,7 +28,10 @@ func main() {
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer stop()
 
-	f := collector.NewHTTPStatusCollectorFactory(*target)
+	f := collector.HTTPStatusCollectorFactory{
+		Target:  *target,
+		Timeout: *timeout,
+	}
 	r := reporter.NewTUIReporter()
 	m := meter.New(f, r)
 
