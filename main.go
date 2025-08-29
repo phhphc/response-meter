@@ -8,9 +8,9 @@ import (
 	"os"
 	"os/signal"
 
-	"github.com/phhphc/response-meter/collector"
-	"github.com/phhphc/response-meter/meter"
-	"github.com/phhphc/response-meter/reporter"
+	"github.com/phhphc/response-meter/internal/collector"
+	"github.com/phhphc/response-meter/internal/meter"
+	"github.com/phhphc/response-meter/internal/reporter"
 )
 
 func main() {
