@@ -11,6 +11,7 @@ import (
 type Meter struct {
 	CollectorFactory CollectorFactory
 	Reporter         Reporter
+	ReportInterval   time.Duration
 }
 
 type CollectorFactory interface {
@@ -30,13 +31,6 @@ type Stats struct {
 	TotalDuration      time.Duration
 	LastPeriodCounts   map[string]int
 	LastPeriodDuration time.Duration
-}
-
-func New(f CollectorFactory, r Reporter) *Meter {
-	return &Meter{
-		CollectorFactory: f,
-		Reporter:         r,
-	}
 }
 
 func (m Meter) Measure(ctx context.Context, concurrency int) error {
@@ -67,7 +61,7 @@ func (m Meter) Measure(ctx context.Context, concurrency int) error {
 	}
 
 	g.Go(func() error {
-		t := time.NewTicker(2 * time.Second)
+		t := time.NewTicker(m.ReportInterval)
 		defer t.Stop()
 
 		s := Stats{

@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"os"
 	"os/signal"
+	"time"
 
 	"github.com/phhphc/response-meter/internal/collector"
 	"github.com/phhphc/response-meter/internal/meter"
@@ -16,6 +17,7 @@ import (
 func main() {
 	target := flag.String("t", "", "target url")
 	concurrency := flag.Int("c", 1, "number of concurrent requests")
+	interval := flag.Duration("i", 2*time.Second, "report interval (default: 2s)")
 	timeout := flag.Duration("d", 0, "timeout duration (default: 0 - no timeout)")
 	flag.Parse()
 
@@ -33,7 +35,11 @@ func main() {
 		Timeout: *timeout,
 	}
 	r := reporter.NewTUIReporter()
-	m := meter.New(f, r)
+	m := meter.Meter{
+		CollectorFactory: f,
+		Reporter:         r,
+		ReportInterval:   *interval,
+	}
 
 	err := m.Measure(ctx, *concurrency)
 	if err != nil && !errors.Is(err, context.Canceled) {
