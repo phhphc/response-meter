@@ -37,23 +37,25 @@ response-meter -t="https://example.com" -c=10
 The tool provides a real-time TUI dashboard displaying:
 
 ```
-                                           Response Meter
+                                 Response Meter
 
---------------------------------------------- ALL TIME ---------------------------------------------
+----------------------------------- ALL TIME -----------------------------------
 
-Duration: 45s                   Requests/sec: 127.3      Total Requests: 5,729
+Duration: 54s                  Requests/sec: 1.4        Total Requests: 75
 Response Distribution:
-  200                                                 85.2% [█████████████████████████     ] 4,881
-  404                                                 10.1% [███                           ] 578
-  500                                                  4.7% [█                             ] 270
+  Timeout                           4.0% [█                             ] 3
+  200                              30.7% [█████████                     ] 23
+  500                              33.3% [█████████                     ] 25
+  404                              32.0% [█████████                     ] 24
 
-------------------------------------------- LAST PERIOD --------------------------------------------
+--------------------------------- LAST PERIOD ----------------------------------
 
-Duration: 2s                   Requests/sec: 134.5      Total Requests: 269
+Duration: 3s                   Requests/sec: 2.3        Total Requests: 7
 Response Distribution:
-  200                                                 87.0% [██████████████████████████    ] 234
-  404                                                  8.9% [██                            ] 24
-  500                                                  4.1% [█                             ] 11
+  Timeout                           0.0% [                              ] 0
+  200                              42.9% [████████████                  ] 3
+  500                              42.9% [████████████                  ] 3
+  404                              14.3% [████                          ] 1
 
 Press Ctrl+C to exit.
 ```

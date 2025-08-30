@@ -25,7 +25,7 @@ func (t TUIReporter) resetScreen() {
 }
 
 func (t TUIReporter) displayDashboard(s meter.Stats) {
-	width := 100
+	width := 80
 
 	title := "Response Meter"
 	t.printCentered(title, width)
@@ -74,10 +74,10 @@ func (t TUIReporter) displayMetrics(duration time.Duration, requestRate float64,
 	fmt.Println("Response Distribution:")
 	if totalCount > 0 {
 		for response, count := range counts {
-			displayResponse := t.formatResponse(response, 50)
+			displayResponse := t.formatResponse(response, 30)
 			percentage := float64(count) / float64(totalCount) * 100
 			progressBar := t.createProgressBar(percentage, 30)
-			fmt.Printf("  %-50s %6.1f%% %s %s\n",
+			fmt.Printf("  %-30s %6.1f%% %s %s\n",
 				displayResponse,
 				percentage,
 				progressBar,
