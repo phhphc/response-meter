@@ -13,7 +13,7 @@ A lightweight tool to continuously hit a target server, collect responses, and c
 
 ## Installation
 
-Requires Go 1.24.2+
+Requires Go 1.25+
 
 ```bash
 go install github.com/phhphc/response-meter@latest
