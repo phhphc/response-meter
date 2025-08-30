@@ -24,13 +24,15 @@ go install github.com/phhphc/response-meter@latest
 ### Basic Usage
 
 ```bash
-response-meter -t="https://example.com" -c=10
+response-meter -t="https://httpbin.org/status/200%2C404%2C500"
 ```
 
 ### Command Line Options
 
-- `-t string`: Target URL to test (required)
+- `-t string`: HTTP(S) URL to probe. (required)
+- `-i duration`: Interval between reports (e.g., 500ms, 2s, 1m) (default: 2s)
 - `-c int`: Number of concurrent requests (default: 1)
+- `-d duration`: Per-request timeout; 0 disables timeout (default: 0s)
 
 ### Sample Output
 
