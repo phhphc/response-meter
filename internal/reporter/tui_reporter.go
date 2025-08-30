@@ -89,18 +89,12 @@ func (t TUIReporter) displayMetrics(duration time.Duration, requestRate float64,
 }
 
 func (t TUIReporter) printCentered(text string, width int) {
-	padding := (width - len(text)) / 2
-	if padding < 0 {
-		padding = 0
-	}
+	padding := max((width-len(text))/2, 0)
 	fmt.Printf("%s%s\n", strings.Repeat(" ", padding), text)
 }
 
 func (t TUIReporter) printSectionHeader(title string, width int) {
-	padding := (width - len(title) - 2) / 2
-	if padding < 0 {
-		padding = 0
-	}
+	padding := max((width-len(title)-2)/2, 0)
 	line := strings.Repeat("-", padding) + " " + title + " " + strings.Repeat("-", padding)
 	for len(line) < width {
 		line += "-"
@@ -116,10 +110,7 @@ func (t TUIReporter) formatResponse(response string, maxLen int) string {
 }
 
 func (t TUIReporter) createProgressBar(percentage float64, width int) string {
-	filled := int(percentage / 100.0 * float64(width))
-	if filled > width {
-		filled = width
-	}
+	filled := int(min(percentage, 100.0) / 100.0 * float64(width))
 	bar := strings.Repeat("█", filled) + strings.Repeat(" ", width-filled)
 	return fmt.Sprintf("[%s]", bar)
 }
